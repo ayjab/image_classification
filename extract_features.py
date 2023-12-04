@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-@author: Victor Gonzalez Castro (victor.gonzalez@unileon.es)
-
-"""
-
 import os
 import glob
 from sklearn.preprocessing import LabelEncoder
@@ -13,24 +7,20 @@ from skimage.measure import label, regionprops
 import numpy as np
 import h5py
 
-
 def check_if_directory_exists(name_folder):
     """
     check_if_directory_exists(name_folder)
     INPUT:
         name_folder: name of the directory to be checked
     OUTPUT:
-        a message indicating that the directory does not exist and if it is created
-        
-    @author: Eduardo Fidalgo (EFF)
+        a message indicating that the directory does not exist and if it is
+        created
     """
-
     if not os.path.exists(name_folder):
         print(name_folder + " directory does not exist, created")
         os.makedirs(name_folder)
     else:
         print(name_folder + " directory exists, no action performed")
-
 
 def get_shape_features(image_region):
     """
@@ -45,84 +35,20 @@ def get_shape_features(image_region):
     Vector with the descriptor of the input image
 
     """
-
-    shape_features = np.empty(shape=10)
-
-    # Look at the documentation of regionprops (specifically, to the 
-    # example that is shown in the documentation) to get the properties
-    # of the region that you need to get the descriptors of shape_features 
-    # (mentioned above)
-    # ====================== YOUR CODE HERE ======================
-
-    # ============================================================
-
-
-    # Convex Area: Number of pixels of convex hull image, which is the 
-    # smallest convex polygon that encloses the region
-    # ====================== YOUR CODE HERE ======================
-
-    # ============================================================
-
-    # Eccentricity: Eccentricity of the ellipse that has the same second-
-    # moments as the region
-    # ====================== YOUR CODE HERE ======================
-
-    # ============================================================
-
-    # Perimeter: Perimeter of object which approximates the contour as a 
-    # line through the centers of border pixels using a 4-connectivity
-    # ====================== YOUR CODE HERE ======================
-
-    # ============================================================
-
-    # Equivalent Diameter: The diameter of a circle with the same area as 
-    # the region
-    # ====================== YOUR CODE HERE ======================
-
-    # ============================================================
-
-    # Extent: Ratio of pixels in the region to pixels in the total 
-    # bounding box
-    # ====================== YOUR CODE HERE ======================
-
-    # ============================================================
-
-    # Filled Area: Number of pixels of the region will all the holes 
-    # filled in
-    # ====================== YOUR CODE HERE ======================
-
-    # ============================================================
-
-    # Minor Axis Length: The length of the minor axis of the ellipse that 
-    # has the same normalized second central moments as the region.
-    # ====================== YOUR CODE HERE ======================
-
-    # ============================================================
-
-    # Major Axis Length: The length of the major axis of the ellipse that 
-    # has the same normalized second central moments as the region.
-    # ====================== YOUR CODE HERE ======================
-
-    # ============================================================
-
-    # R: Ratio between the major and minor axis of the ellipse that has 
-    # the same second central moments as the region.
-    # ====================== YOUR CODE HERE ======================
-
-    # ============================================================
-
-    # Solidity: Ratio of pixels in the region to pixels of the convex 
-    # hull image.
-    # ====================== YOUR CODE HERE ======================
-
-    # ============================================================
+    shape_features = []
+    region=label(image_region)
+    rgprops = regionprops(region)
+    shape_features.append(rgprops[0].area_convex)
+    shape_features.append(rgprops[0].eccentricity)
+    shape_features.append(rgprops[0].perimeter)
+    shape_features.append(rgprops[0].equivalent_diameter_area)
+    shape_features.append(rgprops[0].extent)
+    shape_features.append(rgprops[0].filled_area)
+    shape_features.append(rgprops[0].major_axis_length)
+    shape_features.append(rgprops[0].major_axis_length/rgprops[0].minor_axis_length)
+    shape_features.append(rgprops[0].solidity)
 
     return (shape_features)
-
-
-# ------------------------
-# ----- MAIN PROGRAM -----
-# ------------------------
 
 dir_base = "./Images"
 dir_edges = "Edges"
@@ -140,7 +66,6 @@ Y = np.array([])
 
 for i, lab in enumerate(image_labels):
     cur_path = dir_images_edges + '/' + lab
-
 
     # Check how many files there are, together with their extensions.
     # The images are in .png format in this lab
